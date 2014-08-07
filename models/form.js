@@ -3,7 +3,6 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var log = require(global.config.modules.LOGGING).LOG;
 
 var formSchema = Schema({
     displayName: {
@@ -11,65 +10,46 @@ var formSchema = Schema({
         required: true,
         index: true
     },
-    title: {
-        type: String
-    },
-    icon: {
-        type: String,
-        default: ''
-    },
-    description: {
-        type: String,
-        default: ''
-    },
-    btnLabel: {
-        type: String,
-        default: ''
-    },
+    title: String,
+    icon: String,
+    description: String,
+    btnLabel: String,
     settings: {},
     fields: [],
     version: Number,
     created: Date,
     lastModified: Date,
-    stream: [
+    postStream: [
         {type: Schema.Types.ObjectId, ref: 'PostStream'}
     ],
-    url: {
-        type: String,
-        default: ''
-    },
-    privileges: {
-        type: String,
-        default: 'User'
-    }
+    url: String
 });
 
 formSchema.pre('save', function (next) {
     this.wasNew = this.isNew;
     if (!this.isNew) {
+        if(!this.version){
+            this.version = 0;
+        }
         this.version += 1;
         this.lastModified = new Date();
         return next();
     }
-    this.version = 1;
     this.created = new Date();
     this.lastModified = new Date();
-    next();
+    return next();
 });
 
 formSchema.post('save', function () {
     try {
         if (this.wasNew) {
-            //TODO: temporary solution hacked together for testing purposes (will probably end up being permanent, I just know it)
+            //TODO: temporary solution hacked together for testing purposes
+            // will probably end up being permanent, I just know it
             this.url = 'forms/repo/' + this._id;
-            this.save(function (err) {
-                if (err) {
-                    log.error(__filename, ' - ', err);
-                }
-            });
+            this.save();
         }
     } catch (err) {
-        log.error(__filename, ' - ', err);
+        console.log(__filename, ' - ', err);
     }
 });
 

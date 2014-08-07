@@ -6,13 +6,11 @@ var Schema = mongoose.Schema;
 
 var postSchema = Schema({
     name: String,
-    description: String,
     icon: String,
-    menuLabel: String,
     created: Date,
     lastModified: Date,
-    form: { type: Schema.Types.ObjectId, ref: 'Form' },
-    comments: [ { type: Schema.Types.ObjectId, ref: 'Comment' } ],
+    postStream: { type: Schema.Types.ObjectId, ref: 'PostStream', required: true },
+    commentStream: [ { type: Schema.Types.ObjectId, ref: 'PostStream' } ],
     fields: []
 });
 
@@ -26,6 +24,5 @@ postSchema.pre('save', function (next) {
     next();
 });
 
-
-exports.Post = mongoose.model('Post', postSchema);
+module.exports = mongoose.model('Post', postSchema);
 

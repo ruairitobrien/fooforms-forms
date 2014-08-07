@@ -24,5 +24,5 @@ commentStreamSchema.pre('save', function (next) {
 });
 
 
-module.exports = mongoose.model('CommentStream', commentStreamSchema);
+module.exports = mongoose.model('PostStream', commentStreamSchema);
 

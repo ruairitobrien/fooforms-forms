@@ -5,7 +5,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var commentSchema = Schema({
-    content: String,
+    content: {
+        type: String,
+        required: true
+    },
     created: Date,
     lastModified: Date,
     likes: {
@@ -20,13 +23,15 @@ var commentSchema = Schema({
       type: Schema.Types.ObjectId,
         ref: 'Comment'
     }],
-    stream: {
+    commentStream: {
         type: Schema.Types.ObjectId,
-        ref: 'CommentStream'
+        ref: 'Form',
+        required: true
     },
     commenter: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     }
 });
 
