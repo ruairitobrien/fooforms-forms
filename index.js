@@ -4,13 +4,13 @@ var util = require('util');
 var assert = require('assert');
 
 
-var Form = function () {
+var FooForm = function () {
     Emitter.call(this);
     var self = this;
 
 
 };
 
-util.inherits(Form, Emitter);
+util.inherits(FooForm, Emitter);
 
-module.exports = Form;
+module.exports = FooForm;
