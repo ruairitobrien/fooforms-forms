@@ -23,6 +23,15 @@ postStreamSchema.pre('save', function (next) {
     next();
 });
 
-
-module.exports = mongoose.model('PostStream', postStreamSchema);
+module.exports = function (dbConnection) {
+    var PostStream;
+    try {
+        PostStream = dbConnection.model('PostStream');
+    } catch (err) {
+        if(!PostStream) {
+            PostStream = dbConnection.model('PostStream', postStreamSchema);
+        }
+    }
+    return PostStream;
+};
 

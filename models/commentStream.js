@@ -23,6 +23,15 @@ commentStreamSchema.pre('save', function (next) {
     next();
 });
 
-
-module.exports = mongoose.model('PostStream', commentStreamSchema);
+module.exports = function (dbConnection) {
+    var CommentStream;
+    try {
+        CommentStream = dbConnection.model('CommentStream');
+    } catch (err) {
+        if(!CommentStream) {
+            CommentStream = dbConnection.model('CommentStream', commentStreamSchema);
+        }
+    }
+    return CommentStream;
+};
 

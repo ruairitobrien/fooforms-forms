@@ -45,6 +45,15 @@ commentSchema.pre('save', function (next) {
     next();
 });
 
-
-module.exports = mongoose.model('Comment', commentSchema);
+module.exports = function (dbConnection) {
+    var Comment;
+    try {
+        Comment = dbConnection.model('Comment');
+    } catch (err) {
+        if(!Comment) {
+            Comment = dbConnection.model('Comment', commentSchema);
+        }
+    }
+    return Comment;
+};
 

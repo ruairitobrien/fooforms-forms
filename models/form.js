@@ -16,7 +16,7 @@ var formSchema = Schema({
     btnLabel: String,
     settings: {},
     fields: [],
-    version: Number,
+    formEvents: [],
     created: Date,
     lastModified: Date,
     postStream: [
@@ -27,16 +27,13 @@ var formSchema = Schema({
 
 formSchema.pre('save', function (next) {
     this.wasNew = this.isNew;
+    var now = new Date();
     if (!this.isNew) {
-        if(!this.version){
-            this.version = 0;
-        }
-        this.version += 1;
-        this.lastModified = new Date();
+        this.lastModified = now;
         return next();
     }
-    this.created = new Date();
-    this.lastModified = new Date();
+    this.created = now;
+    this.lastModified = now;
     return next();
 });
 
@@ -53,5 +50,15 @@ formSchema.post('save', function () {
     }
 });
 
-module.exports = mongoose.model('Form', formSchema);
+module.exports = function (dbConnection) {
+    var Form;
+    try {
+        Form = dbConnection.model('Form');
+    } catch (err) {
+        if(!Form) {
+            Form = dbConnection.model('Form', formSchema);
+        }
+    }
+    return Form;
+};
 

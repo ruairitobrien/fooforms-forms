@@ -24,5 +24,15 @@ postSchema.pre('save', function (next) {
     next();
 });
 
-module.exports = mongoose.model('Post', postSchema);
+module.exports = function (dbConnection) {
+    var Post;
+    try {
+        Post = dbConnection.model('Post');
+    } catch (err) {
+        if(!Post) {
+            Post = dbConnection.model('Post', postSchema);
+        }
+    }
+    return Post;
+};
 
