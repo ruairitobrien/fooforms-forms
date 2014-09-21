@@ -17,6 +17,20 @@ var FormQuery = require('../lib/formQuery');
 var compareForms = function (form1, form2) {
     form1._id.should.eql(form2._id);
     form1.displayName.should.equal(form2.displayName);
+    form1.title.should.equal(form2.title);
+    form1.icon.should.equal(form2.icon);
+    form1.description.should.equal(form2.description);
+    form1.btnLabel.should.equal(form2.btnLabel);
+    form1.formEvents.length.should.equal(form2.formEvents.length)
+    for (var i = 0; i < form1.formEvents.length; i++) {
+        form1.formEvents[i].should.equal(form2.formEvents[i]);
+    }
+    form1.settings.should.equal(form2.settings);
+    form1.fields.length.should.equal(form2.fields.length);
+    for (var i = 0; i < form1.fields.length; i++) {
+        form1.fields[i].should.equal(form2.fields[i]);
+    }
+    form1.postStream.should.eql(form2.postStream);
 
 };
 
@@ -34,16 +48,16 @@ describe('Form Queries', function () {
         var icon = 'www.fooforms.com/icon.png';
         var description = 'the form description';
         var btnLabel = 'the button label';
-        var formEvents = [{}];
+        var formEvents = [{ hello: "hello"}];
         var settings = {
             "setting": {},
             "something": [],
             "something-else": "test"
         };
         var fields = [
-            {},
-            {},
-            {}
+            { name: "SomeName" },
+            { thing: "someThing" },
+            { bla: "bla" }
         ];
         var postStream = ObjectId;
 
