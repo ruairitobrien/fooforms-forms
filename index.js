@@ -40,68 +40,77 @@ var FooForm = function (dbConnection) {
      * FORM COMMANDS
      */
 
-    self.createForm = function () {
-
+    self.createForm = function (form, next) {
+        var formCommand = new FormCommand(Form);
+        formCommand.create(form, next);
     };
 
-    self.updatedForm = function () {
-
+    self.updateForm = function (form, next) {
+        var formCommand = new FormCommand(Form);
+        formCommand.update(form, next);
     };
 
-    self.deleteForm = function () {
-
+    self.deleteForm = function (form, next) {
+        var formCommand = new FormCommand(Form);
+        formCommand.deleteRecord(form, next);
     };
 
     /*******************************************************************************************************************
      * FORM QUERIES
      */
 
-    self.findFormById = function() {
-
+    self.findFormById = function (id, next) {
+        _formQuery.findById(id, next);
     };
 
     /*******************************************************************************************************************
      * POST COMMANDS
      */
-    self.createPost = function () {
-
+    self.createPost = function (post, next) {
+        var postCommand = new PostCommand(Post);
+        postCommand.create(post, next);
     };
 
-    self.updatedPost = function () {
-
+    self.updatePost = function (post, next) {
+        var postCommand = new PostCommand(Post);
+        postCommand.update(post, next);
     };
 
-    self.deletePost = function () {
-
+    self.deletePost = function (post, next) {
+        var postCommand = new PostCommand(Post);
+        postCommand.deleteRecord(post, next);
     };
 
     /*******************************************************************************************************************
      * POST QUERIES
      */
-    self.findPostById = function () {
-
+    self.findPostById = function (id, next) {
+        _postQuery.findById(id, next);
     };
 
     /*******************************************************************************************************************
      * COMMENT COMMANDS
      */
-    self.createComment = function () {
-
+    self.createComment = function (comment, next) {
+        var commentCommand = new CommentCommand(Comment);
+        commentCommand.create(comment, next);
     };
 
-    self.updatedComment = function () {
-
+    self.updateComment = function (comment, next) {
+        var commentCommand = new CommentCommand(Comment);
+        commentCommand.update(comment, next);
     };
 
-    self.deleteComment = function () {
-
+    self.deleteComment = function (comment, next) {
+        var commentCommand = new CommentCommand(Comment);
+        commentCommand.deleteRecord(comment, next);
     };
 
     /*******************************************************************************************************************
      * COMMENT QUERIES
      */
-    self.findCommentById = function () {
-
+    self.findCommentById = function (id, next) {
+        _commentQuery.findById(id, next);
     };
 
 

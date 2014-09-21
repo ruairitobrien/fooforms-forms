@@ -15,6 +15,7 @@ var FormCommand = require('../lib/formCommand');
 var FormQuery = require('../lib/formQuery');
 
 var compareForms = function (form1, form2) {
+    var i = 0;
     form1._id.should.eql(form2._id);
     form1.displayName.should.equal(form2.displayName);
     form1.title.should.equal(form2.title);
@@ -22,12 +23,12 @@ var compareForms = function (form1, form2) {
     form1.description.should.equal(form2.description);
     form1.btnLabel.should.equal(form2.btnLabel);
     form1.formEvents.length.should.equal(form2.formEvents.length)
-    for (var i = 0; i < form1.formEvents.length; i++) {
+    for (i = 0; i < form1.formEvents.length; i++) {
         form1.formEvents[i].should.equal(form2.formEvents[i]);
     }
     form1.settings.should.equal(form2.settings);
     form1.fields.length.should.equal(form2.fields.length);
-    for (var i = 0; i < form1.fields.length; i++) {
+    for (i = 0; i < form1.fields.length; i++) {
         form1.fields[i].should.equal(form2.fields[i]);
     }
     form1.postStream.should.eql(form2.postStream);

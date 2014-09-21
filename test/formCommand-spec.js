@@ -85,11 +85,7 @@ describe('Form Commands', function () {
         var formEvents = [
             {}
         ];
-        var settings = {
-            "setting": {},
-            "something": [],
-            "something-else": "test"
-        };
+        var settings = {"setting": {}, "something": [], "something-else": "test"};
         var fields = [
             {},
             {},

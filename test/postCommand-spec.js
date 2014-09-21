@@ -225,7 +225,7 @@ describe('Post Commands', function () {
         });
 
         it('fails to update an post that does not exist', function (done) {
-            postCommand.update({commentStream: [ObjectId, ObjectId]}, function (err, result) {
+            postCommand.update({teams: [ObjectId, ObjectId]}, function (err, result) {
                 (result.success).should.equal(false);
                 should.not.exist(result.post);
                 done(err);
