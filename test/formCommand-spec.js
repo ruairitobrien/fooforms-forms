@@ -82,7 +82,9 @@ describe('Form Commands', function () {
         var icon = 'www.fooforms.com/icon.png';
         var description = 'the form description';
         var btnLabel = 'the button label';
-        var formEvents = [{}];
+        var formEvents = [
+            {}
+        ];
         var settings = {
             "setting": {},
             "something": [],
