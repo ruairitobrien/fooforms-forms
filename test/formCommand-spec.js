@@ -23,10 +23,11 @@ describe('Form Commands', function () {
         var form = {};
 
         var displayName = 'form';
+        var owner = ObjectId;
 
         before(function (done) {
             mockgoose.reset();
-            var testForm = {displayName: displayName};
+            var testForm = {displayName: displayName, owner: owner};
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
                 done(err);
@@ -38,6 +39,9 @@ describe('Form Commands', function () {
         });
         it('displayname is ' + displayName, function () {
             form.displayName.should.equal(displayName);
+        });
+        it('owner is ' + owner, function () {
+           form.owner.should.eql(owner);
         });
         it('has no title', function () {
             should.not.exist(form.title);
@@ -92,6 +96,7 @@ describe('Form Commands', function () {
             {}
         ];
         var postStream = ObjectId;
+        var owner = ObjectId;
 
         before(function (done) {
             mockgoose.reset();
@@ -99,7 +104,7 @@ describe('Form Commands', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields, formEvents: formEvents,
-                postStream: postStream
+                postStream: postStream, owner: owner
             };
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
@@ -162,10 +167,11 @@ describe('Form Commands', function () {
         var formCommand = new FormCommand(Form);
         var form = {};
         var displayName = 'form';
+        var owner = ObjectId;
 
         beforeEach(function (done) {
             mockgoose.reset();
-            var testForm = {displayName: displayName};
+            var testForm = {displayName: displayName, owner: owner};
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
                 done(err);
@@ -231,6 +237,7 @@ describe('Form Commands', function () {
             {}
         ];
         var postStream = ObjectId;
+        var owner = ObjectId;
 
         var displayNameUpdated = 'form_updated';
         var titleUpdated = 'updated form title';
@@ -250,7 +257,7 @@ describe('Form Commands', function () {
             mockgoose.reset();
             var testForm = {
                 displayName: displayName, title: title, icon: icon, description: description, btnLabel: btnLabel,
-                settings: settings, fields: fields, formEvents: formEvents, postStream: postStream
+                settings: settings, fields: fields, formEvents: formEvents, postStream: postStream, owner: owner
             };
             formCommand.create(testForm, function (err, result) {
                 form = result.form;

@@ -22,6 +22,14 @@ var formSchema = Schema({
     postStream: [
         {type: Schema.Types.ObjectId, ref: 'PostStream'}
     ],
+    owner: {
+        type: Schema.Types.ObjectId,
+        required: true
+    },
+    private: {
+        type: Boolean,
+        default: false
+    },
     url: String
 });
 

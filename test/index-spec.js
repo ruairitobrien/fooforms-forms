@@ -33,6 +33,7 @@ describe('FooForm', function () {
             {}
         ];
         var postStream = ObjectId;
+        var owner = ObjectId;
 
         beforeEach(function (done) {
             mockgoose.reset();
@@ -40,7 +41,7 @@ describe('FooForm', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields, formEvents: formEvents,
-                postStream: postStream
+                postStream: postStream, owner: owner
             };
             fooForm.createForm(testForm, function (err, result) {
                 form = result.form;
@@ -121,12 +122,13 @@ describe('FooForm', function () {
         var form = {};
 
         var displayName = 'form';
+        var owner = ObjectId;
 
         var invalidId = ObjectId;
 
         before(function (done) {
             mockgoose.reset();
-            var testForm = {displayName: displayName};
+            var testForm = {displayName: displayName, owner: owner};
             fooForm.createForm(testForm, function (err, result) {
                 form = result.form;
                 done(err);

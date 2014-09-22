@@ -32,6 +32,7 @@ var compareForms = function (form1, form2) {
         form1.fields[i].should.equal(form2.fields[i]);
     }
     form1.postStream.should.eql(form2.postStream);
+    form1.owner.should.eql(form2.owner);
 
 };
 
@@ -61,6 +62,7 @@ describe('Form Queries', function () {
             { bla: "bla" }
         ];
         var postStream = ObjectId;
+        var owner = ObjectId;
 
         var invalidId = ObjectId;
 
@@ -70,7 +72,7 @@ describe('Form Queries', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields, formEvents: formEvents,
-                postStream: postStream
+                postStream: postStream, owner: owner
             };
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
