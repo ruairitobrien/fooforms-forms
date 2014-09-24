@@ -10,7 +10,11 @@ var commentStreamSchema = Schema({
     comments: [{
         type: Schema.Types.ObjectId,
         ref: 'Comment'
-    }]
+    }],
+    deleted: {
+        type: Boolean,
+        default: false
+    }
 });
 
 commentStreamSchema.pre('save', function (next) {

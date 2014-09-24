@@ -38,7 +38,7 @@ describe('Post', function () {
             should.not.exist(post.icon);
         });
         it('has no comment stream', function () {
-            post.commentStream.length.should.equal(0);
+            post.commentStreams.length.should.equal(0);
         });
         it('has no fields', function () {
             post.fields.length.should.equal(0);
@@ -70,7 +70,7 @@ describe('Post', function () {
         before(function (done) {
             mockgoose.reset();
             var testPost = new Post({postStream: postStream, name: name,
-                icon: icon, commentStream: commentStream, fields: fields});
+                icon: icon, commentStreams: commentStream, fields: fields});
             testPost.save(function (err, savedPost) {
                 post = savedPost;
                 done(err);
@@ -86,8 +86,8 @@ describe('Post', function () {
             post.icon.should.equal(icon);
         });
         it('has the commentStream: ' + commentStream, function () {
-            post.commentStream.length.should.equal(1);
-            post.commentStream[0].should.equal(commentStream);
+            post.commentStreams.length.should.equal(1);
+            post.commentStreams[0].should.equal(commentStream);
         });
         it('has the fields: ' + JSON.stringify(fields), function () {
             post.fields.length.should.equal(fields.length);

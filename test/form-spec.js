@@ -51,7 +51,7 @@ describe('Form', function () {
             form.fields.length.should.equal(0);
         });
         it('has no stream', function () {
-            should.not.exist(form.stream);
+            form.postStreams.length.should.equal(0);
         });
         it('has a create date', function () {
             should.exist(form.created);
@@ -94,7 +94,7 @@ describe('Form', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields,
-                postStream: postStream, owner: owner
+                postStreams: postStream, owner: owner
             });
             testForm.save(function (err, savedForm) {
                 form = savedForm;
@@ -127,8 +127,8 @@ describe('Form', function () {
             }
         });
         it('has the postStream: ' + postStream, function () {
-            form.postStream.length.should.equal(1);
-            form.postStream[0].should.equal(postStream);
+            form.postStreams.length.should.equal(1);
+            form.postStreams[0].should.equal(postStream);
         });
         it('has a url', function () {
             should.exist(form.url);

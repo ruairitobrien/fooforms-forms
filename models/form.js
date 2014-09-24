@@ -19,7 +19,7 @@ var formSchema = Schema({
     formEvents: [],
     created: Date,
     lastModified: Date,
-    postStream: [
+    postStreams: [
         {type: Schema.Types.ObjectId, ref: 'PostStream'}
     ],
     owner: {
@@ -30,7 +30,11 @@ var formSchema = Schema({
         type: Boolean,
         default: false
     },
-    url: String
+    url: String,
+    deleted: {
+        type: Boolean,
+        default: false
+    }
 });
 
 formSchema.pre('save', function (next) {

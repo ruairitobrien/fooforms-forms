@@ -11,14 +11,19 @@ mockgoose(mongoose);
 var db = mongoose.connection;
 
 var Form = require('../models/form')(db);
+var Post = require('../models/post')(db);
+var Comment = require('../models/comment')(db);
+var PostStream = require('../models/postStream')(db);
+var CommentStream = require('../models/commentStream')(db);
 var FormCommand = require('../lib/formCommand');
+var PostCommand = require('../lib/postCommand');
 
 
 describe('Form Commands', function () {
     // Happy path
     describe('create a Form with defaults', function () {
 
-        var formCommand = new FormCommand(Form);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
 
         var form = {};
 
@@ -41,7 +46,7 @@ describe('Form Commands', function () {
             form.displayName.should.equal(displayName);
         });
         it('owner is ' + owner, function () {
-           form.owner.should.eql(owner);
+            form.owner.should.eql(owner);
         });
         it('has no title', function () {
             should.not.exist(form.title);
@@ -61,8 +66,8 @@ describe('Form Commands', function () {
         it('has no fields', function () {
             form.fields.length.should.equal(0);
         });
-        it('has no stream', function () {
-            should.not.exist(form.stream);
+        it('has a post stream', function () {
+            form.postStreams.length.should.equal(1);
         });
         it('has a create date', function () {
             should.exist(form.created);
@@ -78,7 +83,7 @@ describe('Form Commands', function () {
     });
 
     describe('creating Form with most values', function () {
-        var formCommand = new FormCommand(Form);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
         var form = {};
 
         var displayName = 'form';
@@ -95,7 +100,6 @@ describe('Form Commands', function () {
             {},
             {}
         ];
-        var postStream = ObjectId;
         var owner = ObjectId;
 
         before(function (done) {
@@ -104,7 +108,7 @@ describe('Form Commands', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields, formEvents: formEvents,
-                postStream: postStream, owner: owner
+                owner: owner
             };
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
@@ -143,9 +147,8 @@ describe('Form Commands', function () {
                 form.fields[i].should.equal(fields[i]);
             }
         });
-        it('has the postStream: ' + postStream, function () {
-            form.postStream.length.should.equal(1);
-            form.postStream[0].should.equal(postStream);
+        it('has a postStream', function () {
+            form.postStreams.length.should.equal(1);
         });
         it('has a url', function () {
             should.exist(form.url);
@@ -163,8 +166,8 @@ describe('Form Commands', function () {
         });
     });
 
-    describe('deleting an Form', function () {
-        var formCommand = new FormCommand(Form);
+    describe('deleting a Form', function () {
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
         var form = {};
         var displayName = 'form';
         var owner = ObjectId;
@@ -211,10 +214,30 @@ describe('Form Commands', function () {
             });
         });
 
+        it('deletes all posts in the post stream', function (done) {
+            var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
+            var testPost = {postStream: form.postStreams[0]};
+            postCommand.create(testPost, function (err, postCreateResult) {
+                console.log(postCreateResult);
+                postCreateResult.success.should.equal(true);
+                should.not.exist(err);
+                formCommand.deleteRecord(form, function (err, result) {
+                    (result.success).should.equal(true);
+                    Form.findById(form._id, function (err, doc) {
+                        should.not.exist(doc);
+                        Post.findById(postCreateResult.post._id, function (err, doc) {
+                            should.not.exist(doc);
+                            done(err);
+                        });
+                    });
+                });
+            });
+        });
+
     });
 
     describe('updating an Form', function () {
-        var formCommand = new FormCommand(Form);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
         var form = {};
 
         var displayName = 'form';
@@ -236,7 +259,6 @@ describe('Form Commands', function () {
             {},
             {}
         ];
-        var postStream = ObjectId;
         var owner = ObjectId;
 
         var displayNameUpdated = 'form_updated';
@@ -257,7 +279,7 @@ describe('Form Commands', function () {
             mockgoose.reset();
             var testForm = {
                 displayName: displayName, title: title, icon: icon, description: description, btnLabel: btnLabel,
-                settings: settings, fields: fields, formEvents: formEvents, postStream: postStream, owner: owner
+                settings: settings, fields: fields, formEvents: formEvents, owner: owner
             };
             formCommand.create(testForm, function (err, result) {
                 form = result.form;

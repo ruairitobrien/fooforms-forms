@@ -9,6 +9,8 @@ var ObjectId = mongoose.Types.ObjectId();
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
 var db = mongoose.connection;
+var CommentStream = require('../models/commentStream')(db);
+var PostStream = require('../models/postStream')(db);
 
 var FooForm = require('../index');
 
@@ -32,7 +34,6 @@ describe('FooForm', function () {
             {},
             {}
         ];
-        var postStream = ObjectId;
         var owner = ObjectId;
 
         beforeEach(function (done) {
@@ -41,7 +42,7 @@ describe('FooForm', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields, formEvents: formEvents,
-                postStream: postStream, owner: owner
+                owner: owner
             };
             fooForm.createForm(testForm, function (err, result) {
                 form = result.form;
@@ -160,24 +161,28 @@ describe('FooForm', function () {
 
     describe('Post Commands', function () {
         var post = {};
-
-        var postStream = ObjectId;
+        var postStream;
         var name = 'post';
         var icon = 'www.fooforms.com/icon.png';
-        var commentStream = ObjectId;
         var fields = [
             {"something": {}},
             {"somethingElse": "test"},
             {},
             {}
         ];
+
         beforeEach(function (done) {
             mockgoose.reset();
-            var testPost = {postStream: postStream, name: name,
-                icon: icon, commentStream: commentStream, fields: fields};
-            fooForm.createPost(testPost, function (err, result) {
-                post = result.post;
-                done(err);
+            var postStreamModel = new PostStream();
+            postStreamModel.save(function (err, doc) {
+                should.not.exist(err);
+                postStream = doc._id;
+                var testPost = {postStream: postStream, name: name,
+                    icon: icon, fields: fields};
+                fooForm.createPost(testPost, function (err, result) {
+                    post = result.post;
+                    done(err);
+                });
             });
         });
         after(function () {
@@ -224,7 +229,7 @@ describe('FooForm', function () {
                 should.exist(result.post);
                 result.post.name.should.equal(nameUpdated);
                 result.post.icon.should.equal(iconUpdated);
-                result.post.commentStream[0].should.eql(commentStream);
+                result.post.commentStreams.length.should.equal(1);
                 result.post.fields.length.should.equal(fields.length);
                 done(err);
             });
@@ -244,21 +249,26 @@ describe('FooForm', function () {
 
         var name = 'post';
         var icon = 'www.fooposts.com/icon.png';
-        var postStream = ObjectId;
-        var commentStream = ObjectId;
-        var fields = [{a: "a"},{b: "b"},{c: "c"}];
+        var postStream;
+        var fields = [
+            {a: "a"},
+            {b: "b"},
+            {c: "c"}
+        ];
         var invalidId = ObjectId;
 
-        before(function (done) {
+        beforeEach(function (done) {
             mockgoose.reset();
-            var testPost = {
-                name: name, icon: icon,
-                postStream: postStream, commentStream: commentStream,
-                fields: fields
-            };
-            fooForm.createPost(testPost, function (err, result) {
-                post = result.post;
-                done(err);
+            var postStreamModel = new PostStream();
+            postStreamModel.save(function (err, doc) {
+                should.not.exist(err);
+                postStream = doc._id;
+                var testPost = {postStream: postStream, name: name,
+                    icon: icon, fields: fields};
+                fooForm.createPost(testPost, function (err, result) {
+                    post = result.post;
+                    done(err);
+                });
             });
         });
         after(function () {
@@ -290,15 +300,21 @@ describe('FooForm', function () {
 
         var commenter = ObjectId;
         var content = 'some content';
-        var commentStream = ObjectId;
+        var commentStream;
 
         beforeEach(function (done) {
             mockgoose.reset();
-            var testComment = {commentStream: commentStream, content: content, commenter: commenter};
-            fooForm.createComment(testComment, function (err, result) {
-                comment = result.comment;
-                done(err);
+            var commentStreamModel = new CommentStream();
+            commentStreamModel.save(function (err, doc) {
+                should.not.exist(err);
+                commentStream = doc;
+                var testComment = {commentStream: commentStream._id, content: content, commenter: commenter};
+                fooForm.createComment(testComment, function (err, result) {
+                    comment = result.comment;
+                    done(err);
+                });
             });
+
         });
         after(function () {
             mockgoose.reset();
@@ -339,16 +355,21 @@ describe('FooForm', function () {
 
         var commenter = ObjectId;
         var content = 'some content';
-        var commentStream = ObjectId;
+        var commentStream;
 
         var invalidId = ObjectId;
 
-        before(function (done) {
+        beforeEach(function (done) {
             mockgoose.reset();
-            var testComment = {commentStream: commentStream, content: content, commenter: commenter};
-            fooForm.createComment(testComment, function (err, result) {
-                comment = result.comment;
-                done(err);
+            var commentStreamModel = new CommentStream();
+            commentStreamModel.save(function (err, doc) {
+                should.not.exist(err);
+                commentStream = doc;
+                var testComment = {commentStream: commentStream._id, content: content, commenter: commenter};
+                fooForm.createComment(testComment, function (err, result) {
+                    comment = result.comment;
+                    done(err);
+                });
             });
         });
         after(function () {

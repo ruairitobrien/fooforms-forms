@@ -10,7 +10,11 @@ var postStreamSchema = Schema({
     posts: [{
         type: Schema.Types.ObjectId,
         ref: 'Post'
-    }]
+    }],
+    deleted: {
+        type: Boolean,
+        default: false
+    }
 });
 
 postStreamSchema.pre('save', function (next) {

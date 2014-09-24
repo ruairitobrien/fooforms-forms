@@ -11,6 +11,7 @@ mockgoose(mongoose);
 var db = mongoose.connection;
 
 var Form = require('../models/form')(db);
+var PostStream = require('../models/postStream')(db);
 var FormCommand = require('../lib/formCommand');
 var FormQuery = require('../lib/formQuery');
 
@@ -31,7 +32,10 @@ var compareForms = function (form1, form2) {
     for (i = 0; i < form1.fields.length; i++) {
         form1.fields[i].should.equal(form2.fields[i]);
     }
-    form1.postStream.should.eql(form2.postStream);
+    form1.postStreams.length.should.equal(form2.postStreams.length);
+    for (i = 0; i < form1.postStreams.length; i++) {
+        form1.postStreams[i].should.eql(form2.postStreams[i]);
+    }
     form1.owner.should.eql(form2.owner);
 
 };
@@ -42,7 +46,7 @@ describe('Form Queries', function () {
     describe('finding a single form', function () {
 
         var formQuery = new FormQuery(Form);
-        var formCommand = new FormCommand(Form);
+        var formCommand = new FormCommand(Form, PostStream);
         var form = {};
 
         var displayName = 'form';
@@ -61,7 +65,6 @@ describe('Form Queries', function () {
             { thing: "someThing" },
             { bla: "bla" }
         ];
-        var postStream = ObjectId;
         var owner = ObjectId;
 
         var invalidId = ObjectId;
@@ -72,7 +75,7 @@ describe('Form Queries', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields, formEvents: formEvents,
-                postStream: postStream, owner: owner
+                owner: owner
             };
             formCommand.create(testForm, function (err, result) {
                 form = result.form;

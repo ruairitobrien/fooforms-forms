@@ -11,6 +11,8 @@ mockgoose(mongoose);
 var db = mongoose.connection;
 
 var Post = require('../models/post')(db);
+var CommentStream = require('../models/commentStream')(db);
+var PostStream = require('../models/postStream')(db);
 var PostCommand = require('../lib/postCommand');
 var PostQuery = require('../lib/postQuery');
 
@@ -19,9 +21,9 @@ var comparePosts = function (post1, post2) {
     post1.name.should.equal(post2.name);
     post1.icon.should.equal(post2.icon);
     post1.postStream.should.eql(post2.postStream);
-    post1.commentStream.length.should.equal(post2.commentStream.length);
-    for (var i = 0; i < post1.commentStream.length; i++) {
-        post1.commentStream[i].should.eql(post2.commentStream[i]);
+    post1.commentStreams.length.should.equal(post2.commentStreams.length);
+    for (var i = 0; i < post1.commentStreams.length; i++) {
+        post1.commentStreams[i].should.eql(post2.commentStreams[i]);
     }
     post1.fields.length.should.equal(post2.fields.length);
     for (var i = 0; i < post1.fields.length; i++) {
@@ -31,26 +33,37 @@ var comparePosts = function (post1, post2) {
 
 
 describe('Post Queries', function () {
+    var postStream;
+    before(function (done) {
+        mockgoose.reset();
+        var postStreamModel = new PostStream();
+        postStreamModel.save(function (err, doc) {
+            should.not.exist(err);
+            should.exist(doc._id);
+            postStream = doc._id;
+            done();
+        });
+    });
+    after(function () {
+        mockgoose.reset();
+    });
     // Happy path
     describe('finding a single post', function () {
 
         var postQuery = new PostQuery(Post);
-        var postCommand = new PostCommand(Post);
+        var postCommand = new PostCommand(Post, CommentStream, PostStream);
         var post = {};
 
         var name = 'post';
         var icon = 'www.fooposts.com/icon.png';
-        var postStream = ObjectId;
-        var commentStream = ObjectId;
         var fields = [{a: "a"},{b: "b"},{c: "c"}];
 
         var invalidId = ObjectId;
 
         before(function (done) {
-            mockgoose.reset();
             var testPost = {
                 name: name, icon: icon,
-                postStream: postStream, commentStream: commentStream,
+                postStream: postStream,
                 fields: fields
             };
             postCommand.create(testPost, function (err, result) {
@@ -59,9 +72,6 @@ describe('Post Queries', function () {
             });
         });
 
-        after(function () {
-            mockgoose.reset();
-        });
 
         it('finds an post with id ' + post._id, function (done) {
             postQuery.findById(post._id, function (err, result) {

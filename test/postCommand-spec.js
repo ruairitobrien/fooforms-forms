@@ -11,21 +11,37 @@ mockgoose(mongoose);
 var db = mongoose.connection;
 
 var Post = require('../models/post')(db);
+var Comment = require('../models/comment')(db);
+var CommentStream = require('../models/commentStream')(db);
+var PostStream = require('../models/postStream')(db);
 var PostCommand = require('../lib/postCommand');
+var CommentCommand = require('../lib/commentCommand');
 
 
 describe('Post Commands', function () {
+
+    var postStream;
+    before(function (done) {
+        mockgoose.reset();
+        var postStreamModel = new PostStream();
+        postStreamModel.save(function (err, doc) {
+            should.not.exist(err);
+            should.exist(doc._id);
+            postStream = doc._id;
+            done();
+        });
+    });
+    after(function () {
+        mockgoose.reset();
+    });
     // Happy path
     describe('create a Post with defaults', function () {
 
-        var postCommand = new PostCommand(Post);
+        var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
 
         var post = {};
 
-        var postStream = ObjectId;
-
         before(function (done) {
-            mockgoose.reset();
             var testPost = {postStream: postStream};
             postCommand.create(testPost, function (err, result) {
                 post = result.post;
@@ -42,8 +58,15 @@ describe('Post Commands', function () {
         it('has no icon', function () {
             should.not.exist(post.icon);
         });
-        it('has no comment stream', function () {
-            post.commentStream.length.should.equal(0);
+        it('has a comment stream', function () {
+            post.commentStreams.length.should.equal(1);
+        });
+        it('is in the post stream', function (done) {
+            PostStream.findById(post.postStream, function (err, doc) {
+                should.not.exist(err);
+                (doc.posts.indexOf(post._id) > -1).should.equal(true);
+                done();
+            });
         });
         it('has no fields', function () {
             post.fields.length.should.equal(0);
@@ -59,15 +82,13 @@ describe('Post Commands', function () {
     });
 
     describe('creating Post with most values', function () {
-        var postCommand = new PostCommand(Post);
+        var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
 
 
         var post = {};
 
-        var postStream = ObjectId;
         var name = 'post';
         var icon = 'www.fooforms.com/icon.png';
-        var commentStream = ObjectId;
         var fields = [
             {"something": {}},
             {"somethingElse": "test"},
@@ -77,9 +98,8 @@ describe('Post Commands', function () {
 
 
         before(function (done) {
-            mockgoose.reset();
             var testPost = {postStream: postStream, name: name,
-                icon: icon, commentStream: commentStream, fields: fields};
+                icon: icon, fields: fields};
             postCommand.create(testPost, function (err, result) {
                 post = result.post;
                 done(err);
@@ -94,9 +114,8 @@ describe('Post Commands', function () {
         it('has the icon: ' + icon, function () {
             post.icon.should.equal(icon);
         });
-        it('has the commentStream: ' + commentStream, function () {
-            post.commentStream.length.should.equal(1);
-            post.commentStream[0].should.equal(commentStream);
+        it('has a commentStream ', function () {
+            post.commentStreams.length.should.equal(1);
         });
         it('has the fields: ' + JSON.stringify(fields), function () {
             post.fields.length.should.equal(fields.length);
@@ -108,21 +127,15 @@ describe('Post Commands', function () {
     });
 
     describe('deleting a Post', function () {
-        var postCommand = new PostCommand(Post);
+        var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
         var post = {};
-        var postStream = ObjectId;
 
         beforeEach(function (done) {
-            mockgoose.reset();
             var testPost = {postStream: postStream};
             postCommand.create(testPost, function (err, result) {
                 post = result.post;
                 done(err);
             });
-        });
-
-        after(function () {
-            mockgoose.reset();
         });
 
         it('successfully deletes a post', function (done) {
@@ -154,18 +167,55 @@ describe('Post Commands', function () {
             });
         });
 
+        it('is gone from the post stream', function (done) {
+            postCommand.deleteRecord({_id: post._id}, function (err, result) {
+                (result.success).should.equal(true);
+                Post.findById(post._id, function (err, deletedPost) {
+                    should.not.exist(err);
+                    should.not.exist(deletedPost);
+                    PostStream.findById(post.postStream, function (err, doc) {
+                        should.not.exist(err);
+                        (doc.posts.indexOf(post._id) < 0).should.equal(true);
+                        done(err);
+                    });
+                });
+            });
+        });
+
+        it('deletes comments in comment stream when deleted', function (done) {
+            var commentCommand = new CommentCommand(Comment, CommentStream);
+            var comment = {};
+            var commenter = ObjectId;
+            var content = 'some content';
+            var testComment = {commentStream: post.commentStreams[0], content: content, commenter: commenter};
+
+            commentCommand.create(testComment, function (err, result) {
+                should.not.exist(err);
+                result.success.should.equal(true);
+                comment = result.comment;
+                postCommand.deleteRecord({_id: post._id}, function (err, result) {
+                    result.success.should.equal(true);
+                    Post.findById(post._id, function (err, doc) {
+                        should.not.exist(err);
+                        should.not.exist(doc);
+                        Comment.findById(comment._id, function (err, deletedComment) {
+                            should.not.exist(deletedComment);
+                            done(err);
+                        });
+                    });
+                });
+            });
+        });
+
     });
 
     describe('updating an Post', function () {
-        var postCommand = new PostCommand(Post);
-
+        var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
 
         var post = {};
 
-        var postStream = ObjectId;
         var name = 'post';
         var icon = 'www.fooforms.com/icon.png';
-        var commentStream = ObjectId;
         var fields = [
             {"something": {}},
             {"somethingElse": "test"},
@@ -173,9 +223,7 @@ describe('Post Commands', function () {
             {}
         ];
 
-
         beforeEach(function (done) {
-            mockgoose.reset();
             var testPost = {postStream: postStream};
             postCommand.create(testPost, function (err, result) {
                 post = result.post;
@@ -183,14 +231,9 @@ describe('Post Commands', function () {
             });
         });
 
-        after(function () {
-            mockgoose.reset();
-        });
-
         it('successfully updates an post mongoose object with valid values', function (done) {
             post.name = name;
             post.icon = icon;
-            post.commentStream = commentStream;
             post.fields = fields;
 
             postCommand.update(post, function (err, result) {
@@ -198,7 +241,7 @@ describe('Post Commands', function () {
                 should.exist(result.post);
                 result.post.name.should.equal(name);
                 result.post.icon.should.equal(icon);
-                result.post.commentStream[0].should.eql(commentStream);
+                result.post.commentStreams.length.should.equal(1);
                 result.post.fields.length.should.equal(fields.length);
                 done(err);
             });
@@ -209,7 +252,6 @@ describe('Post Commands', function () {
                 _id: post._id,
                 icon: icon,
                 name: name,
-                commentStream: commentStream,
                 fields: fields
             };
 
@@ -218,7 +260,7 @@ describe('Post Commands', function () {
                 should.exist(result.post);
                 result.post.name.should.equal(name);
                 result.post.icon.should.equal(icon);
-                result.post.commentStream[0].should.eql(commentStream);
+                result.post.commentStreams.length.should.equal(1);
                 result.post.fields.length.should.equal(fields.length);
                 done(err);
             });

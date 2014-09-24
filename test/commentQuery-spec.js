@@ -11,6 +11,7 @@ mockgoose(mongoose);
 var db = mongoose.connection;
 
 var Comment = require('../models/comment')(db);
+var CommentStream = require('../models/commentStream')(db);
 var CommentCommand = require('../lib/commentCommand');
 var CommentQuery = require('../lib/commentQuery');
 
@@ -23,30 +24,38 @@ var compareComments = function (comment1, comment2) {
 
 
 describe('Comment Queries', function () {
+    var commentStream;
+    before(function (done) {
+        mockgoose.reset();
+        var commentStreamModel = new CommentStream();
+        commentStreamModel.save(function (err, doc){
+            should.not.exist(err);
+            commentStream = doc;
+            done();
+        });
+    });
+    after(function () {
+        mockgoose.reset();
+    });
+
     // Happy path
     describe('finding a single comment', function () {
 
         var commentQuery = new CommentQuery(Comment);
-        var commentCommand = new CommentCommand(Comment);
+        var commentCommand = new CommentCommand(Comment, CommentStream);
         var comment = {};
 
         var commenter = ObjectId;
         var content = 'some content';
-        var commentStream = ObjectId;
 
         var invalidId = ObjectId;
 
         before(function (done) {
-            mockgoose.reset();
-            var testComment = {commentStream: commentStream, content: content, commenter: commenter};
+            var testComment = {commentStream: commentStream._id, content: content, commenter: commenter};
             commentCommand.create(testComment, function (err, result) {
                 comment = result.comment;
                 done(err);
             });
-        });
-
-        after(function () {
-            mockgoose.reset();
         });
 
         it('finds an comment with id ' + comment._id, function (done) {

@@ -10,8 +10,14 @@ var postSchema = Schema({
     created: Date,
     lastModified: Date,
     postStream: { type: Schema.Types.ObjectId, ref: 'PostStream', required: true },
-    commentStream: [ { type: Schema.Types.ObjectId, ref: 'PostStream' } ],
-    fields: []
+    commentStreams: [
+        { type: Schema.Types.ObjectId, ref: 'CommentStream' }
+    ],
+    fields: [],
+    deleted: {
+        type: Boolean,
+        default: false
+    }
 });
 
 postSchema.pre('save', function (next) {

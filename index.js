@@ -17,6 +17,8 @@ var FooForm = function (dbConnection) {
     var Form = require('./models/form')(dbConnection);
     var Post = require('./models/post')(dbConnection);
     var Comment = require('./models/comment')(dbConnection);
+    var PostStream = require('./models/postStream')(dbConnection);
+    var CommentStream = require('./models/commentStream')(dbConnection);
 
     var _formQuery = new FormQuery(Form);
     var _postQuery = new PostQuery(Post);
@@ -41,17 +43,17 @@ var FooForm = function (dbConnection) {
      */
 
     self.createForm = function (form, next) {
-        var formCommand = new FormCommand(Form);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
         formCommand.create(form, next);
     };
 
     self.updateForm = function (form, next) {
-        var formCommand = new FormCommand(Form);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
         formCommand.update(form, next);
     };
 
     self.deleteForm = function (form, next) {
-        var formCommand = new FormCommand(Form);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
         formCommand.deleteRecord(form, next);
     };
 
@@ -67,17 +69,17 @@ var FooForm = function (dbConnection) {
      * POST COMMANDS
      */
     self.createPost = function (post, next) {
-        var postCommand = new PostCommand(Post);
+        var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
         postCommand.create(post, next);
     };
 
     self.updatePost = function (post, next) {
-        var postCommand = new PostCommand(Post);
+        var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
         postCommand.update(post, next);
     };
 
     self.deletePost = function (post, next) {
-        var postCommand = new PostCommand(Post);
+        var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
         postCommand.deleteRecord(post, next);
     };
 
@@ -92,17 +94,17 @@ var FooForm = function (dbConnection) {
      * COMMENT COMMANDS
      */
     self.createComment = function (comment, next) {
-        var commentCommand = new CommentCommand(Comment);
+        var commentCommand = new CommentCommand(Comment, CommentStream);
         commentCommand.create(comment, next);
     };
 
     self.updateComment = function (comment, next) {
-        var commentCommand = new CommentCommand(Comment);
+        var commentCommand = new CommentCommand(Comment, CommentStream);
         commentCommand.update(comment, next);
     };
 
     self.deleteComment = function (comment, next) {
-        var commentCommand = new CommentCommand(Comment);
+        var commentCommand = new CommentCommand(Comment, CommentStream);
         commentCommand.deleteRecord(comment, next);
     };
 

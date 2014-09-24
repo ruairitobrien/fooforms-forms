@@ -11,32 +11,42 @@ mockgoose(mongoose);
 var db = mongoose.connection;
 
 var Comment = require('../models/comment')(db);
+var CommentStream = require('../models/commentStream')(db);
 var CommentCommand = require('../lib/commentCommand');
 
 
 describe('Comment Commands', function () {
+    var commentStream;
+    before(function (done) {
+        mockgoose.reset();
+        var commentStreamModel = new CommentStream();
+        commentStreamModel.save(function (err, doc) {
+            should.not.exist(err);
+            should.exist(doc._id);
+            commentStream = doc;
+            done();
+        });
+    });
+    after(function () {
+        mockgoose.reset();
+    });
+
     // Happy path
     describe('create a Comment with defaults', function () {
 
-        var commentCommand = new CommentCommand(Comment);
+        var commentCommand = new CommentCommand(Comment, CommentStream);
 
         var comment = {};
 
         var commenter = ObjectId;
         var content = 'some content';
-        var commentStream = ObjectId;
 
         before(function (done) {
-            mockgoose.reset();
-            var testComment = {commentStream: commentStream, content: content, commenter: commenter};
+            var testComment = {commentStream: commentStream._id, content: content, commenter: commenter};
             commentCommand.create(testComment, function (err, result) {
                 comment = result.comment;
                 done(err);
             });
-        });
-
-        after(function () {
-            mockgoose.reset();
         });
 
         it('has content: ' + content, function () {
@@ -51,8 +61,17 @@ describe('Comment Commands', function () {
         it('has 0 replies', function () {
             comment.replies.length.should.equal(0);
         });
-        it('has the stream: ' + commentStream, function () {
-            comment.commentStream.should.equal(commentStream);
+        it('has a stream ', function () {
+            comment.commentStream.should.eql(commentStream._id);
+        });
+        it('is in the comment stream', function (done) {
+            CommentStream.findById(comment.commentStream, function (err, doc) {
+                should.not.exist(err);
+                should.exist(doc);
+                doc.comments.length.should.equal(1);
+                (doc.comments.indexOf(comment._id) > -1).should.equal(true);
+                done(err);
+            });
         });
         it('has the commenter: ' + commenter, function () {
             comment.commenter.should.equal(commenter);
@@ -66,23 +85,17 @@ describe('Comment Commands', function () {
     });
 
     describe('deleting a Comment', function () {
-        var commentCommand = new CommentCommand(Comment);
+        var commentCommand = new CommentCommand(Comment, CommentStream);
         var comment = {};
         var commenter = ObjectId;
         var content = 'some content';
-        var commentStream = ObjectId;
 
         beforeEach(function (done) {
-            mockgoose.reset();
-            var testComment = {commentStream: commentStream, content: content, commenter: commenter};
+            var testComment = {commentStream: commentStream._id, content: content, commenter: commenter};
             commentCommand.create(testComment, function (err, result) {
                 comment = result.comment;
                 done(err);
             });
-        });
-
-        after(function () {
-            mockgoose.reset();
         });
 
         it('successfully deletes a comment', function (done) {
@@ -105,6 +118,20 @@ describe('Comment Commands', function () {
             });
         });
 
+        it('is gone from the comment stream', function (done) {
+            commentCommand.deleteRecord({_id: comment._id}, function (err, result) {
+                (result.success).should.equal(true);
+                CommentStream.findById(comment.commentStream, function (err, stream) {
+                    should.not.exist(err);
+                    (stream.comments.indexOf(comment) < 0).should.equal(true);
+                    Comment.findById(comment._id, function (err, doc) {
+                        should.not.exist(doc);
+                        done(err);
+                    });
+                });
+            });
+        });
+
         it('gives and error when deleting a comment that does not exist', function (done) {
             commentCommand.deleteRecord({_id: ObjectId}, function (err, result) {
                 (result.success).should.equal(false);
@@ -116,25 +143,19 @@ describe('Comment Commands', function () {
     });
 
     describe('updating an Comment', function () {
-        var commentCommand = new CommentCommand(Comment);
+        var commentCommand = new CommentCommand(Comment, CommentStream);
         var comment = {};
         var commenter = ObjectId;
         var content = 'some content';
-        var commentStream = ObjectId;
 
         var contentUpdated = 'updated content';
 
         beforeEach(function (done) {
-            mockgoose.reset();
-            var testComment = {commentStream: commentStream, content: content, commenter: commenter};
+            var testComment = {commentStream: commentStream._id, content: content, commenter: commenter};
             commentCommand.create(testComment, function (err, result) {
                 comment = result.comment;
                 done(err);
             });
-        });
-
-        after(function () {
-            mockgoose.reset();
         });
 
         it('successfully updates an comment mongoose object with valid values', function (done) {
