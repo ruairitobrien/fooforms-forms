@@ -14,6 +14,7 @@ var postSchema = Schema({
         { type: Schema.Types.ObjectId, ref: 'CommentStream' }
     ],
     fields: [],
+    sharing: {},
     deleted: {
         type: Boolean,
         default: false

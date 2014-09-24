@@ -31,6 +31,7 @@ var formSchema = Schema({
         default: false
     },
     url: String,
+    sharing: {},
     deleted: {
         type: Boolean,
         default: false
