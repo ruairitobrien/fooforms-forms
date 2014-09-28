@@ -8,6 +8,7 @@ var postSchema = Schema({
     name: String,
     icon: String,
     created: Date,
+    createdBy: { type: Schema.Types.ObjectId },
     lastModified: Date,
     postStream: { type: Schema.Types.ObjectId, ref: 'PostStream', required: true },
     commentStreams: [
