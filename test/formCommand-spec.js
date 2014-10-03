@@ -28,11 +28,11 @@ describe('Form Commands', function () {
         var form = {};
 
         var displayName = 'form';
-        var owner = ObjectId;
+        var folder = ObjectId;
 
         before(function (done) {
             mockgoose.reset();
-            var testForm = {displayName: displayName, owner: owner};
+            var testForm = {displayName: displayName, folder: folder};
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
                 done(err);
@@ -45,8 +45,8 @@ describe('Form Commands', function () {
         it('displayname is ' + displayName, function () {
             form.displayName.should.equal(displayName);
         });
-        it('owner is ' + owner, function () {
-            form.owner.should.eql(owner);
+        it('folder is ' + folder, function () {
+            form.folder.should.eql(folder);
         });
         it('has no title', function () {
             should.not.exist(form.title);
@@ -100,7 +100,7 @@ describe('Form Commands', function () {
             {},
             {}
         ];
-        var owner = ObjectId;
+        var folder = ObjectId;
 
         before(function (done) {
             mockgoose.reset();
@@ -108,7 +108,7 @@ describe('Form Commands', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields, formEvents: formEvents,
-                owner: owner
+                folder: folder
             };
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
@@ -170,11 +170,11 @@ describe('Form Commands', function () {
         var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
         var form = {};
         var displayName = 'form';
-        var owner = ObjectId;
+        var folder = ObjectId;
 
         beforeEach(function (done) {
             mockgoose.reset();
-            var testForm = {displayName: displayName, owner: owner};
+            var testForm = {displayName: displayName, folder: folder};
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
                 done(err);
@@ -218,7 +218,6 @@ describe('Form Commands', function () {
             var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
             var testPost = {postStream: form.postStreams[0]};
             postCommand.create(testPost, function (err, postCreateResult) {
-                console.log(postCreateResult);
                 postCreateResult.success.should.equal(true);
                 should.not.exist(err);
                 formCommand.deleteRecord(form, function (err, result) {
@@ -259,7 +258,7 @@ describe('Form Commands', function () {
             {},
             {}
         ];
-        var owner = ObjectId;
+        var folder = ObjectId;
 
         var displayNameUpdated = 'form_updated';
         var titleUpdated = 'updated form title';
@@ -279,7 +278,7 @@ describe('Form Commands', function () {
             mockgoose.reset();
             var testForm = {
                 displayName: displayName, title: title, icon: icon, description: description, btnLabel: btnLabel,
-                settings: settings, fields: fields, formEvents: formEvents, owner: owner
+                settings: settings, fields: fields, formEvents: formEvents, folder: folder
             };
             formCommand.create(testForm, function (err, result) {
                 form = result.form;

@@ -60,7 +60,7 @@ describe('Post Stream', function () {
             mockgoose.reset();
         });
 
-        it('has ' + posts.length + ' comments', function () {
+        it('has ' + posts.length + ' posts', function () {
             postStream.posts.length.should.equal(posts.length);
         });
         it('has a create date', function () {

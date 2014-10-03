@@ -22,8 +22,9 @@ var formSchema = Schema({
     postStreams: [
         {type: Schema.Types.ObjectId, ref: 'PostStream'}
     ],
-    owner: {
+    folder: {
         type: Schema.Types.ObjectId,
+        ref: 'Folder',
         required: true
     },
     private: {
@@ -68,7 +69,7 @@ module.exports = function (dbConnection) {
     try {
         Form = dbConnection.model('Form');
     } catch (err) {
-        if(!Form) {
+        if (!Form) {
             Form = dbConnection.model('Form', formSchema);
         }
     }

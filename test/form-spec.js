@@ -18,11 +18,11 @@ describe('Form', function () {
         var form = {};
 
         var displayName = 'form';
-        var owner = ObjectId;
+        var folder = ObjectId;
 
         before(function (done) {
             mockgoose.reset();
-            var testForm = new Form({displayName: displayName, owner: owner});
+            var testForm = new Form({displayName: displayName, folder: folder});
             testForm.save(function (err, savedForm) {
                 form = savedForm;
                 done(err);
@@ -86,7 +86,7 @@ describe('Form', function () {
             {}
         ];
         var postStream = ObjectId;
-        var owner = ObjectId;
+        var folder = ObjectId;
 
         before(function (done) {
             mockgoose.reset();
@@ -94,7 +94,7 @@ describe('Form', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields,
-                postStreams: postStream, owner: owner
+                postStreams: postStream, folder: folder
             });
             testForm.save(function (err, savedForm) {
                 form = savedForm;
@@ -150,7 +150,7 @@ describe('Form', function () {
             mockgoose.reset();
         });
         it('does not save if displayName is omitted', function (done) {
-            var testForm = new Form({owner: ObjectId});
+            var testForm = new Form({folder: ObjectId});
             testForm.save(function (err, form) {
                 should.exist(err);
                 should.exist(err.errors.displayName);
@@ -159,11 +159,11 @@ describe('Form', function () {
                 done();
             });
         });
-        it('does not save if owner is omitted', function (done) {
+        it('does not save if folder is omitted', function (done) {
             var testForm = new Form({displayName: 'test'});
             testForm.save(function (err, form) {
                 should.exist(err);
-                should.exist(err.errors.owner);
+                should.exist(err.errors.folder);
                 err.name.should.equal('ValidationError');
                 should.not.exist(form);
                 done();

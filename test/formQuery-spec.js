@@ -36,7 +36,7 @@ var compareForms = function (form1, form2) {
     for (i = 0; i < form1.postStreams.length; i++) {
         form1.postStreams[i].should.eql(form2.postStreams[i]);
     }
-    form1.owner.should.eql(form2.owner);
+    form1.folder.should.eql(form2.folder);
 
 };
 
@@ -65,7 +65,7 @@ describe('Form Queries', function () {
             { thing: "someThing" },
             { bla: "bla" }
         ];
-        var owner = ObjectId;
+        var folder = ObjectId;
 
         var invalidId = ObjectId;
 
@@ -75,7 +75,7 @@ describe('Form Queries', function () {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields, formEvents: formEvents,
-                owner: owner
+                folder: folder
             };
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
