@@ -16,6 +16,7 @@ var FooForm = function (dbConnection) {
 
     var Form = require('./models/form')(dbConnection);
     var Post = require('./models/post')(dbConnection);
+    var Folder = require('./models/folder')(dbConnection);
     var Comment = require('./models/comment')(dbConnection);
     var PostStream = require('./models/postStream')(dbConnection);
     var CommentStream = require('./models/commentStream')(dbConnection);
@@ -37,6 +38,7 @@ var FooForm = function (dbConnection) {
     self.Form = Form;
     self.Post = Post;
     self.Comment = Comment;
+    self.Folder = Folder;
 
     /*******************************************************************************************************************
      * FORM COMMANDS
