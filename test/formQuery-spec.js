@@ -11,6 +11,10 @@ mockgoose(mongoose);
 var db = mongoose.connection;
 
 var Form = require('../models/form')(db);
+var Folder = require('../models/folder')(db);
+var Post = require('../models/post')(db);
+var Comment = require('../models/comment')(db);
+var CommentStream = require('../models/commentStream')(db);
 var PostStream = require('../models/postStream')(db);
 var FormCommand = require('../lib/formCommand');
 var FormQuery = require('../lib/formQuery');
@@ -42,11 +46,26 @@ var compareForms = function (form1, form2) {
 
 
 describe('Form Queries', function () {
+    var folder;
+    before(function (done) {
+        mockgoose.reset();
+        var displayName = 'aFolder';
+        var folderModel = new Folder({displayName: displayName});
+        folderModel.save(function (err, doc) {
+            should.not.exist(err);
+            should.exist(doc._id);
+            folder = doc._id;
+            done();
+        });
+    });
+    after(function () {
+        mockgoose.reset();
+    });
     // Happy path
     describe('finding a single form', function () {
 
         var formQuery = new FormQuery(Form);
-        var formCommand = new FormCommand(Form, PostStream);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
         var form = {};
 
         var displayName = 'form';
@@ -65,12 +84,10 @@ describe('Form Queries', function () {
             { thing: "someThing" },
             { bla: "bla" }
         ];
-        var folder = ObjectId;
 
         var invalidId = ObjectId;
 
         before(function (done) {
-            mockgoose.reset();
             var testForm = {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
@@ -81,10 +98,6 @@ describe('Form Queries', function () {
                 form = result.form;
                 done(err);
             });
-        });
-
-        after(function () {
-            mockgoose.reset();
         });
 
         it('finds an form with id ' + form._id, function (done) {

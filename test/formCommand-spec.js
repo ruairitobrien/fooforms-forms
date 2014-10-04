@@ -11,6 +11,7 @@ mockgoose(mongoose);
 var db = mongoose.connection;
 
 var Form = require('../models/form')(db);
+var Folder = require('../models/folder')(db);
 var Post = require('../models/post')(db);
 var Comment = require('../models/comment')(db);
 var PostStream = require('../models/postStream')(db);
@@ -20,18 +21,33 @@ var PostCommand = require('../lib/postCommand');
 
 
 describe('Form Commands', function () {
+
+    var folder;
+    before(function (done) {
+        mockgoose.reset();
+        var displayName = 'aFolder';
+        var folderModel = new Folder({displayName: displayName});
+        folderModel.save(function (err, doc) {
+            should.not.exist(err);
+            should.exist(doc._id);
+            folder = doc._id;
+            done();
+        });
+    });
+    after(function () {
+        mockgoose.reset();
+    });
+
     // Happy path
     describe('create a Form with defaults', function () {
 
-        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
 
         var form = {};
 
         var displayName = 'form';
-        var folder = ObjectId;
 
         before(function (done) {
-            mockgoose.reset();
             var testForm = {displayName: displayName, folder: folder};
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
@@ -39,8 +55,15 @@ describe('Form Commands', function () {
             });
         });
 
-        after(function () {
-            mockgoose.reset();
+        it('has the folder: ' + folder, function () {
+            form.folder.should.equal(folder);
+        });
+        it('is in the folder', function (done) {
+            Folder.findById(folder, function (err, doc) {
+                should.not.exist(err);
+                (doc.forms.indexOf(form._id) > -1).should.equal(true);
+                done();
+            });
         });
         it('displayname is ' + displayName, function () {
             form.displayName.should.equal(displayName);
@@ -83,7 +106,7 @@ describe('Form Commands', function () {
     });
 
     describe('creating Form with most values', function () {
-        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
         var form = {};
 
         var displayName = 'form';
@@ -100,10 +123,8 @@ describe('Form Commands', function () {
             {},
             {}
         ];
-        var folder = ObjectId;
 
         before(function (done) {
-            mockgoose.reset();
             var testForm = {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
@@ -167,22 +188,16 @@ describe('Form Commands', function () {
     });
 
     describe('deleting a Form', function () {
-        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
         var form = {};
         var displayName = 'form';
-        var folder = ObjectId;
 
         beforeEach(function (done) {
-            mockgoose.reset();
             var testForm = {displayName: displayName, folder: folder};
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
                 done(err);
             });
-        });
-
-        after(function () {
-            mockgoose.reset();
         });
 
         it('successfully deletes a form', function (done) {
@@ -214,6 +229,21 @@ describe('Form Commands', function () {
             });
         });
 
+        it('is gone from the folder', function (done) {
+            formCommand.deleteRecord({_id: form._id}, function (err, result) {
+                (result.success).should.equal(true);
+                Form.findById(form._id, function (err, deletedForm) {
+                    should.not.exist(err);
+                    should.not.exist(deletedForm);
+                    Folder.findById(form.folder, function (err, folderDoc) {
+                        should.not.exist(err);
+                        (folderDoc.forms.indexOf(form._id) < 0).should.equal(true);
+                        done(err);
+                    });
+                });
+            });
+        });
+
         it('deletes all posts in the post stream', function (done) {
             var postCommand = new PostCommand(Post, CommentStream, PostStream, Comment);
             var testPost = {postStream: form.postStreams[0]};
@@ -232,11 +262,10 @@ describe('Form Commands', function () {
                 });
             });
         });
-
     });
 
     describe('updating an Form', function () {
-        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
         var form = {};
 
         var displayName = 'form';
@@ -258,7 +287,6 @@ describe('Form Commands', function () {
             {},
             {}
         ];
-        var folder = ObjectId;
 
         var displayNameUpdated = 'form_updated';
         var titleUpdated = 'updated form title';
@@ -275,7 +303,6 @@ describe('Form Commands', function () {
         ];
 
         beforeEach(function (done) {
-            mockgoose.reset();
             var testForm = {
                 displayName: displayName, title: title, icon: icon, description: description, btnLabel: btnLabel,
                 settings: settings, fields: fields, formEvents: formEvents, folder: folder
@@ -284,10 +311,6 @@ describe('Form Commands', function () {
                 form = result.form;
                 done(err);
             });
-        });
-
-        after(function () {
-            mockgoose.reset();
         });
 
         it('successfully updates an form mongoose object with valid values', function (done) {

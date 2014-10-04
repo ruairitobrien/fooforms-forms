@@ -9,6 +9,7 @@ var ObjectId = mongoose.Types.ObjectId();
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
 var db = mongoose.connection;
+var Folder = require('../models/folder')(db);
 var CommentStream = require('../models/commentStream')(db);
 var PostStream = require('../models/postStream')(db);
 
@@ -34,21 +35,28 @@ describe('FooForm', function () {
             {},
             {}
         ];
-        var folder = ObjectId;
+        var folder;
 
         beforeEach(function (done) {
             mockgoose.reset();
-            var testForm = {
-                displayName: displayName, title: title, icon: icon,
-                description: description, btnLabel: btnLabel,
-                settings: settings, fields: fields, formEvents: formEvents,
-                folder: folder
-            };
-            fooForm.createForm(testForm, function (err, result) {
-                form = result.form;
-                done(err);
+            var folderDisplayName = 'aFolder';
+            var folderModel = new Folder({displayName: folderDisplayName});
+            folderModel.save(function (err, doc) {
+                should.not.exist(err);
+                folder = doc._id;
+                var testForm = {
+                    displayName: displayName, title: title, icon: icon,
+                    description: description, btnLabel: btnLabel,
+                    settings: settings, fields: fields, formEvents: formEvents,
+                    folder: folder
+                };
+                fooForm.createForm(testForm, function (err, result) {
+                    form = result.form;
+                    done(err);
+                });
             });
         });
+
         after(function () {
             mockgoose.reset();
         });
@@ -123,16 +131,24 @@ describe('FooForm', function () {
         var form = {};
 
         var displayName = 'form';
-        var folder = ObjectId;
-
         var invalidId = ObjectId;
+        var folder;
 
-        before(function (done) {
+        beforeEach(function (done) {
             mockgoose.reset();
-            var testForm = {displayName: displayName, folder: folder};
-            fooForm.createForm(testForm, function (err, result) {
-                form = result.form;
-                done(err);
+            var folderDisplayName = 'aFolder';
+            var folderModel = new Folder({displayName: folderDisplayName});
+            folderModel.save(function (err, doc) {
+                should.not.exist(err);
+                folder = doc._id;
+                var testForm = {
+                    displayName: displayName,
+                    folder: folder
+                };
+                fooForm.createForm(testForm, function (err, result) {
+                    form = result.form;
+                    done(err);
+                });
             });
         });
         after(function () {

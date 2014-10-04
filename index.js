@@ -45,17 +45,17 @@ var FooForm = function (dbConnection) {
      */
 
     self.createForm = function (form, next) {
-        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
         formCommand.create(form, next);
     };
 
     self.updateForm = function (form, next) {
-        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
         formCommand.update(form, next);
     };
 
     self.deleteForm = function (form, next) {
-        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment);
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
         formCommand.deleteRecord(form, next);
     };
 
