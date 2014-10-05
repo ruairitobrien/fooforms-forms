@@ -23,7 +23,7 @@ var PostCommand = require('../lib/postCommand');
 describe('Form Commands', function () {
 
     var folder;
-    before(function (done) {
+    beforeEach(function (done) {
         mockgoose.reset();
         var displayName = 'aFolder';
         var folderModel = new Folder({displayName: displayName});
@@ -34,7 +34,7 @@ describe('Form Commands', function () {
             done();
         });
     });
-    after(function () {
+    afterEach(function () {
         mockgoose.reset();
     });
 
@@ -47,7 +47,7 @@ describe('Form Commands', function () {
 
         var displayName = 'form';
 
-        before(function (done) {
+        beforeEach(function (done) {
             var testForm = {displayName: displayName, folder: folder};
             formCommand.create(testForm, function (err, result) {
                 form = result.form;
@@ -124,7 +124,7 @@ describe('Form Commands', function () {
             {}
         ];
 
-        before(function (done) {
+        beforeEach(function (done) {
             var testForm = {
                 displayName: displayName, title: title, icon: icon,
                 description: description, btnLabel: btnLabel,
@@ -372,6 +372,30 @@ describe('Form Commands', function () {
             });
         });
 
+    });
+
+    describe('updating an Form', function () {
+        var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
+        var form = {};
+
+        var displayName = 'form';
+
+        beforeEach(function (done) {
+            var testForm = {displayName: displayName, folder: folder};
+            formCommand.create(testForm, function (err, result) {
+                form = result.form;
+                done(err);
+            });
+        });
+
+        it('does not create form with displayName that already exists in folder', function (done) {
+            var testForm = {displayName: displayName, folder: folder};
+            formCommand.create(testForm, function (err, result) {
+                result.success.should.equal(false);
+                result.err.message.should.equal('Form name ' + form.displayName + ' is taken')
+                done(err);
+            });
+        });
     });
 
 });
