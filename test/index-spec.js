@@ -178,7 +178,7 @@ describe('FooForm', function () {
     describe('Post Commands', function () {
         var post = {};
         var postStream;
-        var name = 'post';
+        var displayName = 'post';
         var icon = 'www.fooforms.com/icon.png';
         var fields = [
             {"something": {}},
@@ -193,7 +193,7 @@ describe('FooForm', function () {
             postStreamModel.save(function (err, doc) {
                 should.not.exist(err);
                 postStream = doc._id;
-                var testPost = {postStream: postStream, name: name,
+                var testPost = {postStream: postStream, displayName: displayName,
                     icon: icon, fields: fields};
                 fooForm.createPost(testPost, function (err, result) {
                     post = result.post;
@@ -234,16 +234,16 @@ describe('FooForm', function () {
             });
         });
         it('updates a post successfully', function (done) {
-            var nameUpdated = 'updated name';
+            var displayNameUpdated = 'updated displayName';
             var iconUpdated = 'http://www.fooforms.com/updated_icon.png';
 
-            post.name = nameUpdated;
+            post.displayName = displayNameUpdated;
             post.icon = iconUpdated;
 
             fooForm.updatePost(post, function (err, result) {
                 (result.success).should.equal(true);
                 should.exist(result.post);
-                result.post.name.should.equal(nameUpdated);
+                result.post.displayName.should.equal(displayNameUpdated);
                 result.post.icon.should.equal(iconUpdated);
                 result.post.commentStreams.length.should.equal(1);
                 result.post.fields.length.should.equal(fields.length);
@@ -263,7 +263,7 @@ describe('FooForm', function () {
     describe('Post Queries', function () {
         var post = {};
 
-        var name = 'post';
+        var displayName = 'post';
         var icon = 'www.fooposts.com/icon.png';
         var postStream;
         var fields = [
@@ -279,7 +279,7 @@ describe('FooForm', function () {
             postStreamModel.save(function (err, doc) {
                 should.not.exist(err);
                 postStream = doc._id;
-                var testPost = {postStream: postStream, name: name,
+                var testPost = {postStream: postStream, displayName: displayName,
                     icon: icon, fields: fields};
                 fooForm.createPost(testPost, function (err, result) {
                     post = result.post;

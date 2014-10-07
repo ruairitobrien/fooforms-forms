@@ -18,7 +18,7 @@ var PostQuery = require('../lib/postQuery');
 
 var comparePosts = function (post1, post2) {
     post1._id.should.eql(post2._id);
-    post1.name.should.equal(post2.name);
+    post1.displayName.should.equal(post2.displayName);
     post1.icon.should.equal(post2.icon);
     post1.postStream.should.eql(post2.postStream);
     post1.commentStreams.length.should.equal(post2.commentStreams.length);
@@ -54,7 +54,7 @@ describe('Post Queries', function () {
         var postCommand = new PostCommand(Post, CommentStream, PostStream);
         var post = {};
 
-        var name = 'post';
+        var displayName = 'post';
         var icon = 'www.fooposts.com/icon.png';
         var fields = [{a: "a"},{b: "b"},{c: "c"}];
 
@@ -62,7 +62,7 @@ describe('Post Queries', function () {
 
         before(function (done) {
             var testPost = {
-                name: name, icon: icon,
+                displayName: displayName, icon: icon,
                 postStream: postStream,
                 fields: fields
             };

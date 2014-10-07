@@ -87,7 +87,7 @@ describe('Post Commands', function () {
 
         var post = {};
 
-        var name = 'post';
+        var displayName = 'post';
         var icon = 'www.fooforms.com/icon.png';
         var fields = [
             {"something": {}},
@@ -98,7 +98,7 @@ describe('Post Commands', function () {
 
 
         before(function (done) {
-            var testPost = {postStream: postStream, name: name,
+            var testPost = {postStream: postStream, displayName: displayName,
                 icon: icon, fields: fields};
             postCommand.create(testPost, function (err, result) {
                 post = result.post;
@@ -108,8 +108,8 @@ describe('Post Commands', function () {
         it('has the postStream: ' + postStream, function () {
             post.postStream.should.equal(postStream);
         });
-        it('has the name: ' + name, function () {
-            post.name.should.equal(name);
+        it('has the displayName: ' + displayName, function () {
+            post.displayName.should.equal(displayName);
         });
         it('has the icon: ' + icon, function () {
             post.icon.should.equal(icon);
@@ -214,7 +214,7 @@ describe('Post Commands', function () {
 
         var post = {};
 
-        var name = 'post';
+        var displayName = 'post';
         var icon = 'www.fooforms.com/icon.png';
         var fields = [
             {"something": {}},
@@ -232,14 +232,14 @@ describe('Post Commands', function () {
         });
 
         it('successfully updates an post mongoose object with valid values', function (done) {
-            post.name = name;
+            post.displayName = displayName;
             post.icon = icon;
             post.fields = fields;
 
             postCommand.update(post, function (err, result) {
                 (result.success).should.equal(true);
                 should.exist(result.post);
-                result.post.name.should.equal(name);
+                result.post.displayName.should.equal(displayName);
                 result.post.icon.should.equal(icon);
                 result.post.commentStreams.length.should.equal(1);
                 result.post.fields.length.should.equal(fields.length);
@@ -251,14 +251,14 @@ describe('Post Commands', function () {
             var customPost = {
                 _id: post._id,
                 icon: icon,
-                name: name,
+                displayName: displayName,
                 fields: fields
             };
 
             postCommand.update(customPost, function (err, result) {
                 (result.success).should.equal(true);
                 should.exist(result.post);
-                result.post.name.should.equal(name);
+                result.post.displayName.should.equal(displayName);
                 result.post.icon.should.equal(icon);
                 result.post.commentStreams.length.should.equal(1);
                 result.post.fields.length.should.equal(fields.length);

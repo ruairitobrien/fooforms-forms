@@ -31,8 +31,8 @@ describe('Post', function () {
         it('has the post stream: ' + postStream, function () {
             post.postStream.should.equal(postStream);
         });
-        it('has no name', function () {
-            should.not.exist(post.name);
+        it('has no displayName', function () {
+            should.not.exist(post.displayName);
         });
         it('has no icon', function () {
             should.not.exist(post.icon);
@@ -57,7 +57,7 @@ describe('Post', function () {
         var post = {};
 
         var postStream = ObjectId;
-        var name = 'post';
+        var displayName = 'post';
         var icon = 'www.fooforms.com/icon.png';
         var commentStream = ObjectId;
         var fields = [
@@ -69,7 +69,7 @@ describe('Post', function () {
 
         before(function (done) {
             mockgoose.reset();
-            var testPost = new Post({postStream: postStream, name: name,
+            var testPost = new Post({postStream: postStream, displayName: displayName,
                 icon: icon, commentStreams: commentStream, fields: fields});
             testPost.save(function (err, savedPost) {
                 post = savedPost;
@@ -79,8 +79,8 @@ describe('Post', function () {
         it('has the postStream: ' + postStream, function () {
            post.postStream.should.equal(postStream);
         });
-        it('has the name: ' + name, function () {
-           post.name.should.equal(name);
+        it('has the displayName: ' + displayName, function () {
+           post.displayName.should.equal(displayName);
         });
         it('has the icon: ' + icon, function () {
             post.icon.should.equal(icon);

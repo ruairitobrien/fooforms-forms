@@ -5,7 +5,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var postSchema = Schema({
-    name: String,
+    displayName: String,
+    title: String,
     icon: String,
     created: Date,
     createdBy: { type: Schema.Types.ObjectId },
