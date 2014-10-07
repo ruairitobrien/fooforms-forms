@@ -39,6 +39,8 @@ var FooForm = function (dbConnection) {
     self.Post = Post;
     self.Comment = Comment;
     self.Folder = Folder;
+    self.PostStream = PostStream;
+    self.CommentStream = CommentStream;
 
     /*******************************************************************************************************************
      * FORM COMMANDS
