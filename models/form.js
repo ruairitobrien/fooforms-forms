@@ -3,6 +3,7 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var mongoosePaginate = require('mongoose-paginate');
 
 var formSchema = Schema({
     displayName: {
@@ -63,6 +64,8 @@ formSchema.post('save', function () {
         console.log(__filename, ' - ', err);
     }
 });
+
+formSchema.plugin(mongoosePaginate);
 
 module.exports = function (dbConnection) {
     var Form;

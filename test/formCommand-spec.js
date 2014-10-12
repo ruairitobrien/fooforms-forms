@@ -106,6 +106,8 @@ describe('Form Commands', function () {
     });
 
     describe('creating Form with most values', function () {
+
+
         var formCommand = new FormCommand(Form, PostStream, Post, CommentStream, Comment, Folder);
         var form = {};
 

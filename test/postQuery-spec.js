@@ -5,6 +5,7 @@
 var should = require('should');
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId();
+var async = require('async');
 
 var mockgoose = require('mockgoose');
 mockgoose(mongoose);
@@ -66,12 +67,12 @@ describe('Post Queries', function () {
                 postStream: postStream,
                 fields: fields
             };
+
             postCommand.create(testPost, function (err, result) {
                 post = result.post;
                 done(err);
             });
         });
-
 
         it('finds an post with id ' + post._id, function (done) {
             postQuery.findById(post._id, function (err, result) {
@@ -91,6 +92,7 @@ describe('Post Queries', function () {
                 done(err);
             });
         });
+
     });
 });
 

@@ -3,6 +3,7 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var mongoosePaginate = require('mongoose-paginate');
 
 var postSchema = Schema({
     displayName: String,
@@ -32,6 +33,8 @@ postSchema.pre('save', function (next) {
     this.lastModified = new Date();
     next();
 });
+
+postSchema.plugin(mongoosePaginate);
 
 module.exports = function (dbConnection) {
     var Post;

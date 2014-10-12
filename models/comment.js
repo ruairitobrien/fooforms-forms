@@ -3,6 +3,7 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var mongoosePaginate = require('mongoose-paginate');
 
 var commentSchema = Schema({
     content: {
@@ -48,6 +49,8 @@ commentSchema.pre('save', function (next) {
     this.lastModified = new Date();
     next();
 });
+
+commentSchema.plugin(mongoosePaginate);
 
 module.exports = function (dbConnection) {
     var Comment;
