@@ -50,14 +50,14 @@ describe('Folder', function () {
         var displayName = 'aFolder';
         var icon = 'http://www.fooforms.com/icon.png';
         var forms = [ObjectId, ObjectId, ObjectId, ObjectId];
-        var owners = [ObjectId];
+        var owner = ObjectId;
         var organisation = ObjectId;
         var readOnlyUsers = [ObjectId, ObjectId, ObjectId];
 
         before(function (done) {
             mockgoose.reset();
             var testFolder = new Folder({displayName: displayName, icon: icon,
-                forms: forms, owners: owners, organisation: organisation, readOnlyUsers: readOnlyUsers});
+                forms: forms, owner: owner, organisation: organisation, readOnlyUsers: readOnlyUsers});
             testFolder.save(function (err, savedFolder) {
                 folder = savedFolder;
                 done(err);
@@ -80,8 +80,8 @@ describe('Folder', function () {
         it('has an organisation', function () {
             folder.organisation.should.eql(organisation);
         });
-        it('has ' + owners.length + ' owners', function () {
-            folder.owners.length.should.equal(owners.length);
+        it('has owners ' + owner, function () {
+            folder.owner.should.eql(owner);
         });
         it('has ' + readOnlyUsers.length + ' read only users', function () {
             folder.readOnlyUsers.length.should.equal(readOnlyUsers.length);

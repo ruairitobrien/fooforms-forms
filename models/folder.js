@@ -12,12 +12,10 @@ var folderSchema = Schema({
     icon: {
         type: String
     },
-    owners: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }
-    ],
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     readOnlyUsers: [
         {
             type: Schema.Types.ObjectId,
