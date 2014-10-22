@@ -28,6 +28,10 @@ var folderSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Organisation'
     },
+    team: {
+        type: Schema.Types.ObjectId,
+        ref: 'Team'
+    },
     forms: [
         {
             type: Schema.Types.ObjectId,
