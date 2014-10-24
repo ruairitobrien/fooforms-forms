@@ -245,7 +245,7 @@ describe('FooForm', function () {
                 should.exist(result.post);
                 result.post.displayName.should.equal(displayNameUpdated);
                 result.post.icon.should.equal(iconUpdated);
-                result.post.commentStreams.length.should.equal(1);
+                should.exist(result.post.commentStream);
                 result.post.fields.length.should.equal(fields.length);
                 done(err);
             });

@@ -13,9 +13,7 @@ var postSchema = Schema({
     createdBy: { type: Schema.Types.ObjectId },
     lastModified: Date,
     postStream: { type: Schema.Types.ObjectId, ref: 'PostStream', required: true },
-    commentStreams: [
-        { type: Schema.Types.ObjectId, ref: 'CommentStream' }
-    ],
+    commentStream: { type: Schema.Types.ObjectId, ref: 'CommentStream' },
     fields: [],
     sharing: {},
     deleted: {

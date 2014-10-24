@@ -22,10 +22,8 @@ var comparePosts = function (post1, post2) {
     post1.displayName.should.equal(post2.displayName);
     post1.icon.should.equal(post2.icon);
     post1.postStream.should.eql(post2.postStream);
-    post1.commentStreams.length.should.equal(post2.commentStreams.length);
-    for (var i = 0; i < post1.commentStreams.length; i++) {
-        post1.commentStreams[i].should.eql(post2.commentStreams[i]);
-    }
+    post1.commentStream.should.eql(post2.commentStream);
+
     post1.fields.length.should.equal(post2.fields.length);
     for (var i = 0; i < post1.fields.length; i++) {
         post1.fields[i].should.equal(post2.fields[i]);

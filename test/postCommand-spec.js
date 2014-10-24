@@ -59,7 +59,7 @@ describe('Post Commands', function () {
             should.not.exist(post.icon);
         });
         it('has a comment stream', function () {
-            post.commentStreams.length.should.equal(1);
+            should.exist(post.commentStream);
         });
         it('is in the post stream', function (done) {
             PostStream.findById(post.postStream, function (err, doc) {
@@ -115,7 +115,7 @@ describe('Post Commands', function () {
             post.icon.should.equal(icon);
         });
         it('has a commentStream ', function () {
-            post.commentStreams.length.should.equal(1);
+            should.exist(post.commentStream);
         });
         it('has the fields: ' + JSON.stringify(fields), function () {
             post.fields.length.should.equal(fields.length);
@@ -187,7 +187,7 @@ describe('Post Commands', function () {
             var comment = {};
             var commenter = ObjectId;
             var content = 'some content';
-            var testComment = {commentStream: post.commentStreams[0], content: content, commenter: commenter};
+            var testComment = {commentStream: post.commentStream, content: content, commenter: commenter};
 
             commentCommand.create(testComment, function (err, result) {
                 should.not.exist(err);
@@ -241,7 +241,7 @@ describe('Post Commands', function () {
                 should.exist(result.post);
                 result.post.displayName.should.equal(displayName);
                 result.post.icon.should.equal(icon);
-                result.post.commentStreams.length.should.equal(1);
+                should.exist(result.post.commentStream);
                 result.post.fields.length.should.equal(fields.length);
                 done(err);
             });
@@ -260,7 +260,7 @@ describe('Post Commands', function () {
                 should.exist(result.post);
                 result.post.displayName.should.equal(displayName);
                 result.post.icon.should.equal(icon);
-                result.post.commentStreams.length.should.equal(1);
+                should.exist(result.post.commentStream);
                 result.post.fields.length.should.equal(fields.length);
                 done(err);
             });
