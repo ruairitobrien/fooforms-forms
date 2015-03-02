@@ -69,6 +69,10 @@ var FooForm = function (dbConnection) {
         _formQuery.findById(id, next);
     };
 
+    self.search = function (query, next) {
+        _formQuery.search(query, next);
+    };
+
     /*******************************************************************************************************************
      * POST COMMANDS
      */
